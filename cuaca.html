@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Info Cuaca</title>
+    <style>
+      body {
+        background: #f0f0f0;
+        font-family: sans-serif;
+        text-align: center;
+        padding: 40px;
+      }
+      input,
+      button {
+        padding: 10px;
+        margin: 10px;
+        font-size: 16px;
+      }
+      #result {
+        margin-top: 30px;
+      }
+      table {
+        margin: 0 auto;
+        border-collapse: collapse;
+      }
+      td,
+      th {
+        padding: 10px 20px;
+        border: 1px solid #ccc;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Cari Informasi Cuaca</h2>
+    <input id="cityInput" placeholder="Contoh: Jakarta" />
+    <button onclick="cariCuaca()">Cari</button>
+
+    <div id="result"></div>
+
+    <script>
+      const apiKey = 'b7cfbf7672ca3dc124a4f950ceb813a4'
+
+      function cariCuaca() {
+        const kota = document.getElementById("cityInput").value.trim();
+        if (!kota) return alert("Masukkan nama kota.");
+
+        fetch(
+          `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(
+            kota
+          )}&appid=${apiKey}&units=metric&lang=id`
+        )
+          .then((res) => {
+            if (!res.ok) throw new Error("Kota tidak ditemukan");
+            return res.json();
+          })
+          .then((data) => {
+            document.getElementById("result").innerHTML = `
+            <table>
+              <tr><th>Kota</th><td>${data.name}</td></tr>
+              <tr><th>Negara</th><td>${data.sys.country}</td></tr>
+              <tr><th>Suhu</th><td>${data.main.temp} °C</td></tr>
+              <tr><th>Cuaca</th><td>${data.weather[0].description}</td></tr>
+              <tr><th>Kecepatan Angin</th><td>${data.wind.speed} m/s</td></tr>
+            </table>
+          `;
+          })
+          .catch(() => {
+            document.getElementById("result").innerHTML =
+              '<p style="color:red;">Kota tidak ditemukan.</p>';
+          });
+      }
+    </script>
+  </body>
+</html>
